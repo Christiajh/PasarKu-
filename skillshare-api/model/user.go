@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v4" // atau jwt/v5 jika kamu pakai versi v5
 	"gorm.io/gorm"
 )
 
@@ -22,7 +22,7 @@ type JwtCustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-// Valid implements the jwt.Claims interface
-func (c JwtCustomClaims) Valid() error {
+// ✅ FIX: Valid method with pointer receiver
+func (c *JwtCustomClaims) Valid() error {
 	return c.RegisteredClaims.Valid()
 }
