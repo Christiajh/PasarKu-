@@ -8,14 +8,17 @@ import (
 	"skillshare-api/migration"
 
 	"github.com/joho/godotenv"
+	"os"
 )
 
 func main() {
 	// Load .env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("❌ Error loading .env file")
-	}
+	if os.Getenv("RAILWAY_ENVIRONMENT") == "" {
+    if err := godotenv.Load(); err != nil {
+        log.Println("⚠️ .env file not found (this is fine in production)")
+    }
+}
+
 
 	// Connect ke database
 	db, err := config.ConnectDatabase()
