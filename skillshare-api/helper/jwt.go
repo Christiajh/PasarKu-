@@ -15,7 +15,7 @@ func JWTSecret() string {
 	if secret == "" {
 		// HARUS sama dengan middleware jika JWT_SECRET tidak diset di environment.
 		// Pesan warning hanya di middleware agar tidak terlalu banyak log.
-		return "your_super_secure_and_long_consistent_key"
+		return "TEST_SECRET_123"
 	}
 	return secret
 }

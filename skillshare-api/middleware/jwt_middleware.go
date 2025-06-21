@@ -18,7 +18,7 @@ func JWTSecret() string {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
 		fmt.Println("⚠️ WARNING: JWT_SECRET not set. Using fallback. DO NOT use in production.")
-		secret = "your_super_secure_and_long_consistent_key"
+		secret = "TEST_SECRET_123"
 	}
 	return secret
 }
