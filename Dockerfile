@@ -1,17 +1,20 @@
-# Gunakan base image Go terbaru berbasis Alpine (ringan)
+# Gunakan image ringan Go berbasis Alpine
 FROM golang:1.21-alpine
 
-# Set working directory di dalam container
+# Buat working directory di dalam container
 WORKDIR /app
 
-# Copy semua file ke dalam container
-COPY . .
+# Copy file go.mod dan go.sum dulu, agar cache download efektif
+COPY go.mod go.sum ./
 
-# Download semua dependency dari go.mod
+# Download dependency dulu (lebih cepat, terpisah dari source code)
 RUN go mod download
 
-# Build file utama aplikasi
+# Copy semua source code setelah download selesai
+COPY . .
+
+# Build aplikasi
 RUN go build -o main ./cmd/main.go
 
-# Jalankan binary hasil build
+# Jalankan aplikasi
 CMD ["./main"]
