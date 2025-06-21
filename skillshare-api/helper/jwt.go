@@ -5,7 +5,8 @@ import (
     "skillshare-api/model"
     "time"
 
-    "github.com/golang-jwt/jwt/v5"
+   "github.com/golang-jwt/jwt/v4"
+
 )
 
 // JWTSecret returns the JWT secret key from environment variables.

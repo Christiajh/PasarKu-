@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"skillshare-api/model"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
+	
 	"github.com/labstack/echo/v4"
 	echojwt "github.com/labstack/echo-jwt/v4"
 )
@@ -25,12 +24,10 @@ func JWTSecret() string {
 // JWTMiddleware returns a middleware that validates JWT tokens.
 func JWTMiddleware() echo.MiddlewareFunc {
 	return echojwt.WithConfig(echojwt.Config{
-		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(model.JwtCustomClaims)
-		},
-		SigningKey:  []byte(JWTSecret()),
-		ContextKey:  "user",
-		TokenLookup: "header:Authorization:Bearer",
+		SigningKey:    []byte(JWTSecret()),
+		SigningMethod: "HS256",
+		ContextKey:    "user",
+		TokenLookup:   "header:Authorization:Bearer",
 		ErrorHandler: func(c echo.Context, err error) error {
 			authHeader := c.Request().Header.Get("Authorization")
 			fmt.Println("📥 JWT Middleware menerima Authorization:", authHeader)
