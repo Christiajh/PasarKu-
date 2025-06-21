@@ -3,60 +3,47 @@ package middleware
 import (
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
-	"skillshare-api/model" // Ganti sesuai path sebenarnya
+	"skillshare-api/helper"
+	"skillshare-api/model"
 
 	"github.com/golang-jwt/jwt/v4"
-  "skillshare-api/helper"
-
 	"github.com/labstack/echo/v4"
 	echojwt "github.com/labstack/echo-jwt/v4"
 )
 
-// JWTSecret retrieves the JWT secret key from environment variables.
-// Fallback digunakan jika variabel tidak diset (untuk debugging lokal).
-func JWTSecret() string {
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		fmt.Println("⚠️ WARNING: JWT_SECRET not set. Using fallback. DO NOT use in production.")
-		secret = "TEST_SECRET_123"
-	}
-	return secret
-}
-
-// JWTMiddleware mengembalikan middleware Echo untuk memverifikasi JWT token
+// JWTMiddleware returns Echo middleware that verifies JWT tokens
 func JWTMiddleware() echo.MiddlewareFunc {
 	return echojwt.WithConfig(echojwt.Config{
-		// Menggunakan custom claims yang sesuai dengan struktur JWT kamu
+		// Gunakan custom claims
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(model.JwtCustomClaims)
 		},
 
-		// Kunci dan algoritma signing JWT
+		// Konfigurasi algoritma dan secret
 		SigningKey:    []byte(helper.JWTSecret()),
 		SigningMethod: "HS256",
 
-		// Token akan dicari di header Authorization dan cookie jwt
-		TokenLookup: "header:Authorization",
+		// Token diambil dari header Authorization: Bearer <token>
+		TokenLookup: "header:Authorization:Bearer",
 
-
-		// Key dalam Echo context untuk menyimpan informasi user
+		// Token disimpan dalam context dengan key "user"
 		ContextKey: "user",
 
-		// Handler error khusus untuk debug dan keperluan respons custom
+		// Handler jika token invalid/expired
 		ErrorHandler: func(c echo.Context, err error) error {
 			authHeader := c.Request().Header.Get("Authorization")
 
 			// Debug Logging
+			fmt.Println("🔒 JWT Error Handler Triggered")
 			fmt.Printf("📥 JWT Auth Header: %q\n", authHeader)
 			fmt.Printf("📥 Header Length: %d\n", len(authHeader))
-			fmt.Println("🔐 JWT Secret Used:", JWTSecret())
+			fmt.Println("🔐 JWT Secret Used:", helper.JWTSecret())
 			fmt.Println("🕒 Server Time:", time.Now().Format(time.RFC3339))
 			fmt.Printf("❌ JWT Middleware Error: %v\n", err)
 
-			return echo.NewHTTPError(http.StatusUnauthorized, map[string]interface{}{
+			return c.JSON(http.StatusUnauthorized, echo.Map{
 				"message": "invalid or expired jwt",
 				"detail":  err.Error(),
 			})
