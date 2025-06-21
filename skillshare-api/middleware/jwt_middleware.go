@@ -39,7 +39,8 @@ func JWTMiddleware() echo.MiddlewareFunc {
 		SigningMethod: "HS256",
 
 		// Token akan dicari di header Authorization dan cookie jwt
-		TokenLookup: "header:Authorization:Bearer ,cookie:jwt",
+		TokenLookup: "header:Authorization",
+
 
 		// Key dalam Echo context untuk menyimpan informasi user
 		ContextKey: "user",
