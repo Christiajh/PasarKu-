@@ -2,58 +2,48 @@ package main
 
 import (
 	"log"
-	"net/http" // ADD THIS LINE
+	"net/http"
 	"os"
 	"skillshare-api/config"
 	"skillshare-api/routes"
 	"time"
 
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	// 1. Muat environment variables dari file .env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// 1. Inisialisasi koneksi database (gunakan DATABASE_URL dari environment)
+	db := config.ConnectDatabase()
 
-	// 2. Inisialisasi koneksi database
-	db := config.InitDB()
-	if db == nil {
-		log.Fatal("Failed to connect to database")
-	}
-
-	// 3. Inisialisasi Echo framework
+	// 2. Inisialisasi Echo framework
 	e := echo.New()
 
-	// 4. Tambahkan middleware Echo bawaan
+	// 3. Tambahkan middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-        AllowOrigins: []string{"*"}, // Ganti dengan domain frontend Anda di produksi
-        AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
-        AllowHeaders: []string{"Content-Type", "Authorization"},
-    }))
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
+		AllowHeaders: []string{"Content-Type", "Authorization"},
+	}))
 
-	// 5. Inisialisasi semua rute API
+	// 4. Inisialisasi semua rute API
 	routes.InitRoutes(e, db)
 
-	// 6. Dapatkan port dari environment variable atau gunakan default
+	// 5. Gunakan PORT dari environment (Railway akan mengisi ini otomatis)
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080" // Port default jika PORT tidak diatur di .env
+		port = "8080" // fallback untuk lokal
 	}
 
-	// 7. Mulai server Echo
+	// 6. Jalankan server
 	log.Printf("🚀 Server listening on :%s", port)
-	s := &http.Server{ // Now 'http' will be defined
-		Addr:         ":" + port,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		MaxHeaderBytes: 1 << 20, // 1MB
+	s := &http.Server{
+		Addr:           ":" + port,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
 	}
 	e.Logger.Fatal(e.StartServer(s))
 }

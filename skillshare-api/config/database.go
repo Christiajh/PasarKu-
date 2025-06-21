@@ -1,21 +1,25 @@
-// File: config/database.go
 package config
 
 import (
-	"fmt"
+	"log"
 	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func ConnectDatabase() (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PORT"),
-	)
-	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
+// ConnectDatabase connects to the PostgreSQL database using DATABASE_URL
+func ConnectDatabase() *gorm.DB {
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		log.Fatal("❌ DATABASE_URL is not set in environment")
+	}
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("❌ Failed to connect to database: %v", err)
+	}
+
+	log.Println("✅ Connected to database via DATABASE_URL")
+	return db
 }
