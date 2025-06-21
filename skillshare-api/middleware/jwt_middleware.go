@@ -15,9 +15,8 @@ import (
 func JWTSecret() string {
     secret := os.Getenv("JWT_SECRET")
     if secret == "" {
-        fmt.Println("WARNING: JWT_SECRET environment variable is not set. Using a default fallback secret. ENSURE THIS IS INTENTIONAL FOR DEVELOPMENT. FOR PRODUCTION, ALWAYS SET VIA ENV VAR.")
-        // Ini HARUS SAMA PERSIS dengan fallback di helper/jwt.go
-        secret = "your_super_secure_and_long_consistent_key" // <-- Ganti dengan kunci rahasia asli Anda
+        fmt.Println("⚠️ WARNING: JWT_SECRET not set. Using fallback. DO NOT use in production.")
+        return "your_super_secure_and_long_consistent_key"
     }
     return secret
 }
@@ -27,8 +26,8 @@ func JWTMiddleware() echo.MiddlewareFunc {
         NewClaimsFunc: func(c echo.Context) jwt.Claims {
             return new(model.JwtCustomClaims)
         },
-        SigningKey: []byte(JWTSecret()), // Menggunakan fungsi JWTSecret() yang sama
-        ContextKey: "user",
+        SigningKey:  []byte(JWTSecret()),
+        ContextKey:  "user",
         TokenLookup: "header:Authorization:Bearer",
         ErrorHandler: func(c echo.Context, err error) error {
             c.Logger().Errorf("JWT Middleware Error: %v", err)

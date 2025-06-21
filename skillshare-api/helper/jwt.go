@@ -9,30 +9,33 @@ import (
 )
 
 // JWTSecret returns the JWT secret key from environment variables.
-// In a production environment, ensure JWT_SECRET is always set.
 func JWTSecret() string {
     secret := os.Getenv("JWT_SECRET")
     if secret == "" {
-        // Jika Anda ingin fallback untuk lokal, gunakan nilai yang SAMA PERSIS dengan di middleware
-        return "your_super_secure_and_long_consistent_key" // <-- Ganti dengan kunci rahasia asli Anda
+        // HARUS sama dengan middleware
+        return "your_super_secure_and_long_consistent_key"
     }
     return secret
 }
 
+// GenerateJWT generates a JWT token for a user.
 func GenerateJWT(userID uint, email string) (string, error) {
+    now := time.Now()
+
     claims := &model.JwtCustomClaims{
         UserID: userID,
         Email:  email,
         RegisteredClaims: jwt.RegisteredClaims{
-            ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
-            IssuedAt:  jwt.NewNumericDate(time.Now()),
-            NotBefore: jwt.NewNumericDate(time.Now()),
+            ExpiresAt: jwt.NewNumericDate(now.Add(24 * time.Hour)), // berlaku 24 jam
+            IssuedAt:  jwt.NewNumericDate(now),
+            NotBefore: jwt.NewNumericDate(now.Add(-5 * time.Second)), // sedikit buffer waktu
         },
     }
+
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-    t, err := token.SignedString([]byte(JWTSecret())) // Menggunakan fungsi JWTSecret() yang sama
+    signedToken, err := token.SignedString([]byte(JWTSecret()))
     if err != nil {
         return "", err
     }
-    return t, nil
+    return signedToken, nil
 }
