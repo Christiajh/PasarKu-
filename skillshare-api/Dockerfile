@@ -1,18 +1,24 @@
 # Gunakan image Go ringan
 FROM golang:1.21-alpine
 
-# Buat direktori kerja
+# Set working directory
 WORKDIR /app
 
-# Copy dependency dan download
+# Install git (dibutuhkan untuk go mod jika pakai private repo)
+RUN apk add --no-cache git
+
+# Copy go mod dan sum, lalu download dependency
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy seluruh project
+# Copy semua kode ke dalam container
 COPY . .
 
-# Build binary dengan nama main
+# Build binary dari cmd/main.go dan hasilkan ke root (/app/main)
 RUN go build -o main ./cmd/main.go
+
+# Berikan permission execute ke binary
+RUN chmod +x ./main
 
 # Jalankan aplikasi
 CMD ["./main"]
