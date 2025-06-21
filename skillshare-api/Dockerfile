@@ -1,21 +1,18 @@
-# Gunakan image Go ringan berbasis Alpine
+# Gunakan image Go ringan
 FROM golang:1.21-alpine
 
-# Buat direktori kerja di dalam container
+# Buat direktori kerja
 WORKDIR /app
 
-# Salin dependency terlebih dahulu
+# Copy dependency dan download
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Salin semua source code
+# Copy seluruh project
 COPY . .
 
-# Build aplikasi dari cmd/main.go
+# Build binary dengan nama main
 RUN go build -o main ./cmd/main.go
-
-# Expose port agar Railway tahu
-EXPOSE 8080
 
 # Jalankan aplikasi
 CMD ["./main"]
