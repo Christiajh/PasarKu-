@@ -9,6 +9,7 @@ import (
 	"skillshare-api/model" // Ganti sesuai path sebenarnya
 
 	"github.com/golang-jwt/jwt/v4"
+  "skillshare-api/helper"
 
 	"github.com/labstack/echo/v4"
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -34,7 +35,7 @@ func JWTMiddleware() echo.MiddlewareFunc {
 		},
 
 		// Kunci dan algoritma signing JWT
-		SigningKey:    []byte(JWTSecret()),
+		SigningKey:    []byte(helper.JWTSecret()),
 		SigningMethod: "HS256",
 
 		// Token akan dicari di header Authorization dan cookie jwt
