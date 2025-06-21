@@ -25,38 +25,40 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	// Initialize controllers
 	userController := controller.NewUserController(userService)
 	classController := controller.NewClassController(classService)
-	categoryController := controller.NewCategoryController(db) // Category controller directly uses repo
+	categoryController := controller.NewCategoryController(db)
 
-	// Public routes (no authentication required)
-	e.POST("/register", userController.RegisterUser)
-	e.POST("/login", userController.LoginUser)
-	e.GET("/classes", classController.GetAllClasses)
-	e.GET("/classes/:id", classController.GetClassByID)
-	e.GET("/categories", categoryController.GetAllCategories)
-	e.GET("/categories/:id", categoryController.GetCategoryByID)
+	// ====================
+	// 🔓 PUBLIC ROUTES
+	// ====================
+	public := e.Group("/api/public") // Prefix untuk route tanpa JWT
+	public.POST("/register", userController.RegisterUser)
+	public.POST("/login", userController.LoginUser)
+	public.GET("/classes", classController.GetAllClasses)
+	public.GET("/classes/:id", classController.GetClassByID)
+	public.GET("/categories", categoryController.GetAllCategories)
+	public.GET("/categories/:id", categoryController.GetCategoryByID)
 
-	// Authenticated routes (JWT required)
-	r := e.Group("/api")
-	r.Use(middleware.JWTMiddleware())
+	// ====================
+	// 🔐 PROTECTED ROUTES (JWT)
+	// ====================
+	protected := e.Group("/api")
+	protected.Use(middleware.JWTMiddleware())
 
 	// User routes
-	r.GET("/users/:id", userController.GetUserByID)
-	r.PUT("/users/:id", userController.UpdateUser)
-	r.DELETE("/users/:id", userController.DeleteUser)
+	protected.GET("/users/:id", userController.GetUserByID)
+	protected.PUT("/users/:id", userController.UpdateUser)
+	protected.DELETE("/users/:id", userController.DeleteUser)
 
 	// Class routes
-	r.POST("/classes", classController.CreateClass)
-	r.PUT("/classes/:id", classController.UpdateClass)
-	r.DELETE("/classes/:id", classController.DeleteClass)
-	r.POST("/classes/:class_id/enroll", classController.EnrollInClass)
-	r.GET("/enrollments", classController.GetUserEnrollments)
-	r.DELETE("/classes/:class_id/unenroll", classController.UnenrollFromClass)
+	protected.POST("/classes", classController.CreateClass)
+	protected.PUT("/classes/:id", classController.UpdateClass)
+	protected.DELETE("/classes/:id", classController.DeleteClass)
+	protected.POST("/classes/:class_id/enroll", classController.EnrollInClass)
+	protected.GET("/enrollments", classController.GetUserEnrollments)
+	protected.DELETE("/classes/:class_id/unenroll", classController.UnenrollFromClass)
 
-
-	// Category routes (consider if these should be admin-only or authenticated)
-	// For simplicity, making them authenticated for now, but in a real app,
-	// only admins might create/update/delete categories.
-	r.POST("/categories", categoryController.CreateCategory)
-	r.PUT("/categories/:id", categoryController.UpdateCategory)
-	r.DELETE("/categories/:id", categoryController.DeleteCategory)
+	// Category routes
+	protected.POST("/categories", categoryController.CreateCategory)
+	protected.PUT("/categories/:id", categoryController.UpdateCategory)
+	protected.DELETE("/categories/:id", categoryController.DeleteCategory)
 }
