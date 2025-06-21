@@ -2,12 +2,11 @@ package controller
 
 import (
 	"net/http"
-	"skillshare-api/helper" // Untuk JWT
+	"skillshare-api/helper"
 	"skillshare-api/model"
 	"skillshare-api/service"
 	"strconv"
 
-	 // Untuk klaim JWT
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,7 +18,7 @@ func NewUserController(userService *service.UserService) *UserController {
 	return &UserController{userService: userService}
 }
 
-// RegisterUser handles user registration without password hashing
+// RegisterUser handles user registration
 func (uc *UserController) RegisterUser(c echo.Context) error {
 	var user model.User
 	if err := c.Bind(&user); err != nil {
@@ -31,6 +30,9 @@ func (uc *UserController) RegisterUser(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"message": err.Error()})
 	}
+
+	// PENTING: Kosongkan password sebelum mengirimkannya dalam respons JSON
+	createdUser.Password = ""
 
 	return c.JSON(http.StatusCreated, echo.Map{
 		"message": "User registered successfully",
@@ -68,20 +70,17 @@ func (uc *UserController) LoginUser(c echo.Context) error {
 
 // GetUserByID retrieves a user by ID
 func (uc *UserController) GetUserByID(c echo.Context) error {
-	// Assert directly to *model.JwtCustomClaims
 	claims, ok := c.Get("user").(*model.JwtCustomClaims)
 	if !ok {
 		return c.JSON(http.StatusUnauthorized, echo.Map{"message": "Unauthorized: Invalid token claims"})
 	}
-	loggedInUserID := claims.UserID // User ID dari token
+	loggedInUserID := claims.UserID
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"message": "Invalid user ID"})
 	}
 
-	// Hanya user yang login yang bisa melihat detail profilnya sendiri
-	// Jika user ingin melihat user lain, Anda perlu menambahkan logika otorisasi (misal: admin)
 	if uint(id) != loggedInUserID {
 		return c.JSON(http.StatusForbidden, echo.Map{"message": "Forbidden: You can only view your own profile"})
 	}
@@ -90,6 +89,9 @@ func (uc *UserController) GetUserByID(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusNotFound, echo.Map{"message": err.Error()})
 	}
+
+	// PENTING: Kosongkan password sebelum mengirimkannya dalam respons JSON
+	user.Password = ""
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "User retrieved successfully",
@@ -124,6 +126,9 @@ func (uc *UserController) UpdateUser(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"message": err.Error()})
 	}
+
+	// PENTING: Kosongkan password sebelum mengirimkannya dalam respons JSON
+	user.Password = ""
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "User updated successfully",
