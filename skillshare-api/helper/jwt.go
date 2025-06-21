@@ -25,9 +25,9 @@ func GenerateJWT(userID uint, email string) (string, error) {
 		UserID: userID,
 		Email:  email,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)), // Token expires in 1 hour
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			// Token valid immediately
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)), // ✅ Expired 1 jam
+			IssuedAt:  jwt.NewNumericDate(time.Now()),                   // ✅ Saat ini dibuat
+			NotBefore: jwt.NewNumericDate(time.Now()),                   // ✅ Harus ada
 		},
 	}
 
