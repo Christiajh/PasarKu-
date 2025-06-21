@@ -11,8 +11,11 @@ RUN go mod download
 # Salin semua source code
 COPY . .
 
-# Build aplikasi
+# Build aplikasi dari cmd/main.go
 RUN go build -o main ./cmd/main.go
+
+# Expose port agar Railway tahu
+EXPOSE 8080
 
 # Jalankan aplikasi
 CMD ["./main"]
