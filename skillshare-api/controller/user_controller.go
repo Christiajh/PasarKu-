@@ -41,6 +41,7 @@ func (uc *UserController) RegisterUser(c echo.Context) error {
 }
 
 // LoginUser handles user login without password hashing verification
+// LoginUser handles user login without password hashing verification
 func (uc *UserController) LoginUser(c echo.Context) error {
 	var loginRequest struct {
 		Email    string `json:"email"`
@@ -56,7 +57,7 @@ func (uc *UserController) LoginUser(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, echo.Map{"message": "Invalid credentials"})
 	}
 
-	// Generate JWT token
+	// ✅ Generate a secure JWT token
 	token, err := helper.GenerateJWT(user.ID, user.Email)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"message": "Failed to generate token"})
@@ -67,6 +68,7 @@ func (uc *UserController) LoginUser(c echo.Context) error {
 		"token":   token,
 	})
 }
+
 
 // GetUserByID retrieves a user by ID
 func (uc *UserController) GetUserByID(c echo.Context) error {

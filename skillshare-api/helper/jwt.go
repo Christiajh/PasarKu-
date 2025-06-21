@@ -2,39 +2,37 @@ package helper
 
 import (
 	"os"
-	"skillshare-api/model"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4" // Pastikan versi v4
+	"github.com/golang-jwt/jwt/v4"
+	"skillshare-api/model"
+	"fmt"
 )
 
-// JWTSecret returns the JWT secret key from environment variables.
-// Ini adalah sumber kebenaran untuk secret key saat token DIBUAT.
+// JWTSecret returns the secret key for signing JWT
 func JWTSecret() string {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
-		// HARUS sama dengan middleware jika JWT_SECRET tidak diset di environment.
-		// Pesan warning hanya di middleware agar tidak terlalu banyak log.
-		return "TEST_SECRET_123"
+		fmt.Println("⚠️ WARNING: JWT_SECRET not set. Using fallback. DO NOT use in production.")
+		secret = "TEST_SECRET_123"
 	}
 	return secret
 }
 
-// GenerateJWT generates a JWT token for a user.
+// GenerateJWT creates a JWT token for the given user
 func GenerateJWT(userID uint, email string) (string, error) {
-	now := time.Now()
-
-	claims := &model.JwtCustomClaims{
+	claims := model.JwtCustomClaims{
 		UserID: userID,
 		Email:  email,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(now.Add(24 * time.Hour)),    // Berlaku 24 jam
-			IssuedAt:  jwt.NewNumericDate(now),
-			NotBefore: jwt.NewNumericDate(now.Add(-5 * time.Second)), // Sedikit buffer waktu
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)), // Token expires in 1 hour
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()), // Token valid immediately
 		},
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims)
+
 	signedToken, err := token.SignedString([]byte(JWTSecret()))
 	if err != nil {
 		return "", err
