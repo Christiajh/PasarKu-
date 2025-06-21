@@ -2,10 +2,12 @@ package controller
 
 import (
 	"net/http"
+	"skillshare-api/helper" // Untuk JWT
 	"skillshare-api/model"
 	"skillshare-api/service"
 	"strconv"
 
+	 // Untuk klaim JWT
 	"github.com/labstack/echo/v4"
 )
 
@@ -17,37 +19,45 @@ func NewUserController(userService *service.UserService) *UserController {
 	return &UserController{userService: userService}
 }
 
-// RegisterUser handles user registration
+// RegisterUser handles user registration without password hashing
 func (uc *UserController) RegisterUser(c echo.Context) error {
 	var user model.User
 	if err := c.Bind(&user); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"message": "Invalid request payload"})
 	}
 
-	registeredUser, err := uc.userService.RegisterUser(&user)
+	// Password will be stored as plaintext (NOT RECOMMENDED FOR PRODUCTION)
+	createdUser, err := uc.userService.RegisterUser(&user)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"message": err.Error()})
 	}
 
 	return c.JSON(http.StatusCreated, echo.Map{
 		"message": "User registered successfully",
-		"user":    registeredUser,
+		"user":    createdUser,
 	})
 }
 
-// LoginUser handles user login
+// LoginUser handles user login without password hashing verification
 func (uc *UserController) LoginUser(c echo.Context) error {
-	var req struct {
+	var loginRequest struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
-	if err := c.Bind(&req); err != nil {
+
+	if err := c.Bind(&loginRequest); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"message": "Invalid request payload"})
 	}
 
-	token, err := uc.userService.LoginUser(req.Email, req.Password)
+	user, err := uc.userService.LoginUser(loginRequest.Email, loginRequest.Password)
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"message": err.Error()})
+		return c.JSON(http.StatusUnauthorized, echo.Map{"message": "Invalid credentials"})
+	}
+
+	// Generate JWT token
+	token, err := helper.GenerateJWT(user.ID, user.Email)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"message": "Failed to generate token"})
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
@@ -58,9 +68,22 @@ func (uc *UserController) LoginUser(c echo.Context) error {
 
 // GetUserByID retrieves a user by ID
 func (uc *UserController) GetUserByID(c echo.Context) error {
+	// Assert directly to *model.JwtCustomClaims
+	claims, ok := c.Get("user").(*model.JwtCustomClaims)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, echo.Map{"message": "Unauthorized: Invalid token claims"})
+	}
+	loggedInUserID := claims.UserID // User ID dari token
+
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"message": "Invalid user ID"})
+	}
+
+	// Hanya user yang login yang bisa melihat detail profilnya sendiri
+	// Jika user ingin melihat user lain, Anda perlu menambahkan logika otorisasi (misal: admin)
+	if uint(id) != loggedInUserID {
+		return c.JSON(http.StatusForbidden, echo.Map{"message": "Forbidden: You can only view your own profile"})
 	}
 
 	user, err := uc.userService.GetUserByID(uint(id))
@@ -76,17 +99,26 @@ func (uc *UserController) GetUserByID(c echo.Context) error {
 
 // UpdateUser updates an existing user
 func (uc *UserController) UpdateUser(c echo.Context) error {
+	claims, ok := c.Get("user").(*model.JwtCustomClaims)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, echo.Map{"message": "Unauthorized: Invalid token claims"})
+	}
+	loggedInUserID := claims.UserID
+
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"message": "Invalid user ID"})
+	}
+
+	if uint(id) != loggedInUserID {
+		return c.JSON(http.StatusForbidden, echo.Map{"message": "Forbidden: You can only update your own profile"})
 	}
 
 	var updatedUser model.User
 	if err := c.Bind(&updatedUser); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"message": "Invalid request payload"})
 	}
-
-	updatedUser.ID = uint(id) // Ensure the ID from the URL is used
+	updatedUser.ID = uint(id)
 
 	user, err := uc.userService.UpdateUser(&updatedUser)
 	if err != nil {
@@ -99,11 +131,21 @@ func (uc *UserController) UpdateUser(c echo.Context) error {
 	})
 }
 
-// DeleteUser deletes a user by ID
+// DeleteUser deletes a user
 func (uc *UserController) DeleteUser(c echo.Context) error {
+	claims, ok := c.Get("user").(*model.JwtCustomClaims)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, echo.Map{"message": "Unauthorized: Invalid token claims"})
+	}
+	loggedInUserID := claims.UserID
+
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"message": "Invalid user ID"})
+	}
+
+	if uint(id) != loggedInUserID {
+		return c.JSON(http.StatusForbidden, echo.Map{"message": "Forbidden: You can only delete your own profile"})
 	}
 
 	err = uc.userService.DeleteUser(uint(id))
