@@ -6,7 +6,8 @@ import "gorm.io/gorm"
 type Enrollment struct {
 	gorm.Model
 	UserID  uint `json:"user_id"`
-	User    User `json:"user"` // Belongs to relationship with User
-	ClassID uint `json:"class_id"`
-	Class   Class `json:"class"` // Belongs to relationship with Class
+	User    User `json:"-" gorm:"foreignKey:UserID"` // sembunyikan agar tidak rekursif
+
+	ClassID uint  `json:"class_id"`
+	Class   Class `json:"-" gorm:"foreignKey:ClassID"` // sembunyikan juga
 }
