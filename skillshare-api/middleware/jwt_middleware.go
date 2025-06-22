@@ -23,7 +23,8 @@ func JWTMiddleware() echo.MiddlewareFunc {
 		SigningMethod: "HS256",
 
 		// ✅ Token dengan format: "Authorization: Bearer <token>"
-		TokenLookup: "header:Authorization:Bearer ",
+		TokenLookup: "header:Authorization",
+
 
 		ContextKey: "user",
 
