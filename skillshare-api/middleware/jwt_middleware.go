@@ -13,24 +13,24 @@ import (
 	echojwt "github.com/labstack/echo-jwt/v4"
 )
 
+// JWTMiddleware provides Bearer-authenticated JWT middleware
 func JWTMiddleware() echo.MiddlewareFunc {
 	return echojwt.WithConfig(echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(model.JwtCustomClaims)
 		},
-
 		SigningKey:    []byte(helper.JWTSecret()),
 		SigningMethod: "HS256",
 
-		// ✅ Cukup ini, tanpa `AuthScheme`
-		TokenLookup: "header:Authorization",
+		// ✅ Token dengan format: "Authorization: Bearer <token>"
+		TokenLookup: "header:Authorization:Bearer ",
 
 		ContextKey: "user",
 
 		ErrorHandler: func(c echo.Context, err error) error {
 			authHeader := c.Request().Header.Get("Authorization")
 
-			// Debug info
+			// Debug log
 			fmt.Println("🔒 JWT Middleware Error Triggered")
 			fmt.Printf("📥 Authorization Header: %q\n", authHeader)
 			fmt.Println("🕒 Server Time:", time.Now().Format(time.RFC3339))

@@ -1,15 +1,15 @@
 package helper
 
 import (
+	"fmt"
 	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 	"skillshare-api/model"
-	"fmt"
 )
 
-// JWTSecret returns the secret key for signing JWT
+// JWTSecret returns the JWT secret from environment or fallback
 func JWTSecret() string {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
@@ -19,15 +19,15 @@ func JWTSecret() string {
 	return secret
 }
 
-// GenerateJWT creates a JWT token for the given user
+// GenerateJWT creates a JWT token for the given user with long expiration
 func GenerateJWT(userID uint, email string) (string, error) {
 	claims := model.JwtCustomClaims{
 		UserID: userID,
 		Email:  email,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)), // ✅ Expired 1 jam
-			IssuedAt:  jwt.NewNumericDate(time.Now()),                   // ✅ Saat ini dibuat
-			NotBefore: jwt.NewNumericDate(time.Now()),                   // ✅ Harus ada
+			ExpiresAt: jwt.NewNumericDate(time.Now().AddDate(10, 0, 0)), // ✅ 10 tahun ke depan
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
 		},
 	}
 
