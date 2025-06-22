@@ -31,13 +31,17 @@ func main() {
 	// 4. Inisialisasi semua rute API
 	routes.InitRoutes(e, db)
 
-	// 5. Gunakan PORT dari environment (Railway akan mengisi ini otomatis)
+	// 5. Tambahkan static file Swagger UI (dari folder docs)
+	e.Static("/docs", "docs") // Pastikan folder 'docs' berisi index.html, swagger.yaml, dll
+	e.File("/swagger", "docs/index.html") // Optional: akses langsung ke /swagger
+
+	// 6. Gunakan PORT dari environment (Railway akan mengisi ini otomatis)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080" // fallback untuk lokal
 	}
 
-	// 6. Jalankan server
+	// 7. Jalankan server
 	log.Printf("🚀 Server listening on :%s", port)
 	s := &http.Server{
 		Addr:           ":" + port,
