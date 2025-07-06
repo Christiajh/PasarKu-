@@ -13,13 +13,12 @@ import (
 )
 
 func main() {
-	// 1. Inisialisasi koneksi database (gunakan DATABASE_URL dari environment)
+
 	db := config.ConnectDatabase()
 
-	// 2. Inisialisasi Echo framework
+	
 	e := echo.New()
 
-	// 3. Tambahkan middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -28,20 +27,19 @@ func main() {
 		AllowHeaders: []string{"Content-Type", "Authorization"},
 	}))
 
-	// 4. Inisialisasi semua rute API
+	
 	routes.InitRoutes(e, db)
 
-	// 5. Tambahkan static file Swagger UI (dari folder docs)
-	e.Static("/docs", "docs") // Pastikan folder 'docs' berisi index.html, swagger.yaml, dll
-	e.File("/swagger", "docs/index.html") // Optional: akses langsung ke /swagger
+	
+	e.Static("/docs", "docs") 
+	e.File("/swagger", "docs/index.html") 
 
-	// 6. Gunakan PORT dari environment (Railway akan mengisi ini otomatis)
+	
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080" // fallback untuk lokal
+		port = "8080"
 	}
 
-	// 7. Jalankan server
 	log.Printf("🚀 Server listening on :%s", port)
 	s := &http.Server{
 		Addr:           ":" + port,
