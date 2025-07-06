@@ -15,4 +15,4 @@ Platform sederhana untuk pengguna yang ingin berbagi keterampilan (skill) dan ku
 - **PostgreSQL:** Basis data
 - **JWT:** Untuk otentikasi
 - **Godotenv:** Untuk memuat variabel lingkungan
-- **Bcrypt:** Untuk penghasilan kata sandi
+
