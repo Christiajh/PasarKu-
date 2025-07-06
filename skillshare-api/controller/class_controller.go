@@ -7,8 +7,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	// No longer need "github.com/golang-jwt/jwt" here directly for the assertion,
-	// as you're asserting to your model's claims, which uses jwt.RegisteredClaims internally.
+	
 )
 
 type ClassController struct {
