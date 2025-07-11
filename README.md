@@ -17,7 +17,7 @@ Dirancang agar pengembang dapat dengan mudah membangun sistem pelatihan online a
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-000000?logo=json-web-tokens&logoColor=white)
 ![Godotenv](https://img.shields.io/badge/Godotenv-9cf?logo=go&logoColor=black)
-
+</div>
 ---
 
 ## 🎯 Fitur Unggulan
