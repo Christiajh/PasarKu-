@@ -100,3 +100,5 @@ Gunakan token JWT sebagai Bearer Token di header authorization.
 ![Main](./images/main%20nya.png)
 
 ---
+
+@christian J Hutahaean
