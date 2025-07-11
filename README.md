@@ -19,15 +19,17 @@ Dirancang agar pengembang dapat dengan mudah membangun sistem pelatihan online a
 ![Godotenv](https://img.shields.io/badge/Godotenv-9cf?logo=go&logoColor=black)
 
 ---
----
 
 ## 🎯 Fitur Unggulan
 
-- 🔐 **Registrasi & Login** dengan otentikasi JWT
-- 📚 **Manajemen Kelas (CRUD)**: Buat, ubah, hapus, dan tampilkan kelas keterampilan
-- 👤 **Pendaftaran Kelas**: Pengguna dapat mendaftar atau membatalkan kelas
-- 🔒 **JWT Protected Routes** dengan Bearer Token
-- 🗃️ **Database Relasional** dengan GORM + PostgreSQL
+- 🔐 **Registrasi & Login** dengan otentikasi JWT.
+- 📚 **Manajemen Kelas (CRUD):** Buat, ubah, hapus, dan tampilkan kelas keterampilan.
+- 👤 **Pendaftaran Kelas:** Pengguna dapat mendaftar atau membatalkan kelas.
+- 🔒 **JWT Protected Routes** dengan Bearer Token.
+- 🗃️ **Database Relasional** dengan GORM + PostgreSQL.
+- 📽️ **Video Presentasi:**  
+  👉 Klik gambar di bawah untuk menonton demo lengkap aplikasi SkillShare API:  
+  [![Tonton Video Presentasi](https://img.shields.io/badge/Tonton%20Video%20Presentasi-FF0000?logo=youtube&logoColor=white)](#)
 
 ---
 
