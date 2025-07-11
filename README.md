@@ -27,7 +27,9 @@ Dirancang agar pengembang dapat dengan mudah membangun sistem pelatihan online a
 - 👤 **Pendaftaran Kelas:** Pengguna dapat mendaftar atau membatalkan kelas.
 - 🔒 **JWT Protected Routes** dengan Bearer Token.
 - 🗃️ **Database Relasional** dengan GORM + PostgreSQL.
-- 📽️ **Video Presentasi:**  
+- 📽️ **Video Presentasi:**
+
+  \n\n
   👉 Klik gambar di bawah untuk menonton demo lengkap aplikasi SkillShare API:
 
   
