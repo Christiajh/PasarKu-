@@ -1,7 +1,24 @@
-# 🧠 SkillShare API
+<div align="center">
 
-Platform backend sederhana namun powerful untuk berbagi keterampilan dan kursus singkat. Dirancang agar pengembang dapat dengan mudah membangun sistem pelatihan online atau aplikasi komunitas pembelajaran interaktif.
+# **🧠 SkillShare API**
 
+*Platform backend sederhana namun powerful untuk berbagi keterampilan dan kursus singkat.  
+Dirancang agar pengembang dapat dengan mudah membangun sistem pelatihan online atau aplikasi komunitas pembelajaran interaktif.*
+
+[![last commit](https://img.shields.io/badge/last%20commit-today-brightgreen)](#)
+[![Go](https://img.shields.io/badge/Go-1.20-blue?logo=go)](#)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Relational%20DB-blue?logo=postgresql)](#)
+
+*Built with the tools and technologies:*
+
+![Go](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=white)
+![Echo](https://img.shields.io/badge/Echo-132947?logo=go&logoColor=white)
+![GORM](https://img.shields.io/badge/GORM-FF6B6B?logo=go&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?logo=json-web-tokens&logoColor=white)
+![Godotenv](https://img.shields.io/badge/Godotenv-9cf?logo=go&logoColor=black)
+
+---
 ---
 
 ## 🎯 Fitur Unggulan
