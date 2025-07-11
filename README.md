@@ -39,16 +39,6 @@ Klik gambar di bawah untuk menonton demo lengkap aplikasi SkillShare API:
 
 ---
 
-## 🧱 Teknologi yang Digunakan
-
-| Teknologi     | Deskripsi                                                            |
-|---------------|----------------------------------------------------------------------|
-| **Go**        | Bahasa utama untuk backend API                                       |
-| **Echo**      | Web framework ringan untuk RESTful API                               |
-| **GORM**      | ORM untuk PostgreSQL dan pengelolaan entitas                         |
-| **PostgreSQL**| Basis data relasional                                                |
-| **JWT**       | JSON Web Token untuk otorisasi pengguna                              |
-| **Godotenv**  | Untuk membaca file `.env` secara otomatis                            |
 
 ---
 
