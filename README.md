@@ -28,14 +28,11 @@ Dirancang agar pengembang dapat dengan mudah membangun sistem pelatihan online a
 - 🔒 **JWT Protected Routes** dengan Bearer Token.
 - 🗃️ **Database Relasional** dengan GORM + PostgreSQL.
 - 📽️ **Video Presentasi:**  
-  👉 Klik gambar di bawah untuk menonton demo lengkap aplikasi SkillShare API:  
+  👉 Klik gambar di bawah untuk menonton demo lengkap aplikasi SkillShare API:
+
+  
   [![Tonton Video Presentasi](https://img.shields.io/badge/Tonton%20Video%20Presentasi-FF0000?logo=youtube&logoColor=white)](#)
 
----
-
-## 📽️ Video Presentasi
-
-Klik gambar di bawah untuk menonton demo lengkap aplikasi SkillShare API:
 
 [![Tonton Video Presentasi](https://img.youtube.com/vi/KsjL2NAwx3U/0.jpg)](https://youtu.be/KsjL2NAwx3U)
 
